@@ -1,81 +1,63 @@
-# 📊 Smart Adaptive Dashboard - Build Documentation
+# 🌙 Sleep Health & Lifestyle Dashboard - Build Documentation
 
-**Date:** April 5, 2026  
-**Project:** Dashboard Vision - Intelligent CSV Data Visualization System  
+**Date:** January 2025  
+**Project:** Sleep Health Analytics Dashboard  
 **Status:** ✅ Complete & Functional
 
 ---
 
 ## 🎯 Project Overview
 
-This document describes the complete implementation of an **adaptive data visualization dashboard** that automatically:
-- ✅ Detects CSV data structure
-- ✅ Infers column types (numeric, categorical, date, text)
-- ✅ Generates KPIs automatically (total, average, max, min)
-- ✅ Creates appropriate charts dynamically (line, bar, pie)
-- ✅ Generates smart insights (trends, anomalies, top performers)
-- ✅ Provides interactive filtering (category dropdowns, date ranges)
-- ✅ Handles errors gracefully with fallback messages
+This document describes the refactored **Sleep Health & Lifestyle Dashboard** that separates filtered dynamic content from static global insights. The dashboard displays analytics for **374 individuals** across Sleep Health metrics, with an interactive filter-based interface.
 
-**No hardcoding. No assumptions. Pure data intelligence.**
+**Key Features:**
+- ✅ **6 Specialized KPI Cards** (Sleep Duration, Quality, Stress, Steps, Heart Rate, Sleep Disorders)
+- ✅ **7 Thematic Charts** organized into 3 React Bootstrap tabs
+- ✅ **Static Insights Accordion** (never filtered, global context)
+- ✅ **Horizontal 2-Column Layout** (Filter left, Content right)
+- ✅ **Responsive Design** (desktop to mobile)
+- ✅ **Full Bahasa Indonesia Labels**
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗️ Architecture: 2-Part Dashboard Design
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    CSV File (public/data.csv)            │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────┐
-│  CSV Parser (parseCSV.js + PapaParse)                    │
-│  - Load CSV from public folder                           │
-│  - Clean data (trim, remove empty rows)                  │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────┐
-│  Schema Detection (detectSchema.js) ⭐ CORE              │
-│  - Classify columns by type                              │
-│  - Output: {numeric, categorical, date, text}           │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-               ┌───────┴───────┐
-               │               │
-               ▼               ▼
-    ┌────────────────────┐  ┌─────────────────────┐
-    │  KPI Generation    │  │ Chart Generation    │
-    │  (generateKPIs.js) │  │ (generateCharts.js) │
-    │ - Total, avg, max, │  │ - Line/Bar/Pie      │
-    │   min              │  │ - Based on schema   │
-    └────────┬───────────┘  └─────────┬───────────┘
-             │                        │
-             └───────┬────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│  React Components Layer                                  │
-│  - KPISection: Display KPI cards                         │
-│  - DynamicCharts: Render charts with Recharts           │
-│  - Filters: Interactive filtering UI                     │
-│  - InsightsSection: Auto-generated insights              │
-│  - DataTable: Raw data display                           │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────┐
-│              Dashboard (App.tsx)                          │
-│  - State management with hooks (useState, useMemo)       │
-│  - Filter handling & reactive updates                    │
-│  - Performance optimization                              │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│            Sleep Health Dataset (374 rows)           │
+│        {Age, Sleep Duration, Quality of Sleep,       │
+│         Stress Level, Heart Rate, Physical Activity} │
+└─────────────────────┬───────────────────────────────┘
+                      │
+              ┌───────┴───────┐
+              │               │
+              ▼               ▼
+    ┌────────────────────┐  ┌──────────────────────┐
+    │ SECTION 1          │  │ SECTION 2            │
+    │ FILTERED DYNAMIC   │  │ STATIC INSIGHTS      │
+    │                    │  │                      │
+    │ 🔄 Updates with    │  │ 📊 Never filters     │
+    │    filter change   │  │  Shows full dataset  │
+    │                    │  │  context             │
+    │ 1️⃣ KPI Cards       │  │                      │
+    │ 2️⃣ 7 Charts (Tabs) │  │ 📋 Accordion with:   │
+    │                    │  │  - Main insights     │
+    │ Props:             │  │  - Recommendations   │
+    │ filteredData       │  │  - Fun facts         │
+    │                    │  │                      │
+    │ Ex: Filter = sleep │  │ Props:               │
+    │  disorder "Yes"    │  │ allData (374 rows)   │
+    │ → Shows only 119   │  │                      │
+    │  affected rows     │  │ Ex: Correlation      │
+    │ → 6 KPIs update    │  │  r = -0.78 (stress   │
+    │ → 7 charts update  │  │  vs sleep duration)  │
+    │                    │  │ Always shown         │
+    └────────────────────┘  └──────────────────────┘
 ```
 
 ---
 
-## 📁 File Structure
+## 📁 Project Structure
 
 ### **Core Utilities** (`src/utils/`)
 

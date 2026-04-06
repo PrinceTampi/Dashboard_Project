@@ -93,3 +93,87 @@ export const formatKPIValue = (value) => {
   }
   return value.toLocaleString('en-US', { maximumFractionDigits: 2 });
 };
+
+/**
+ * Specialized KPI Calculators for Sleep Health Dashboard
+ */
+
+/**
+ * Get average sleep duration in hours (from filtered data)
+ */
+export const getAverageSleepDuration = (data) => {
+  if (!data || data.length === 0) return null;
+  const values = data
+    .map(row => toNumber(row['Sleep Duration']))
+    .filter(v => v !== null);
+  
+  if (values.length === 0) return null;
+  const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+  return Math.round(avg * 100) / 100;
+};
+
+/**
+ * Get average sleep quality on a scale of 1-10
+ */
+export const getAverageSleepQuality = (data) => {
+  if (!data || data.length === 0) return null;
+  const values = data
+    .map(row => toNumber(row['Quality of Sleep']))
+    .filter(v => v !== null);
+  
+  if (values.length === 0) return null;
+  const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+  return Math.round(avg * 100) / 100;
+};
+
+/**
+ * Get average stress level on a scale of 1-10
+ */
+export const getAverageStressLevel = (data) => {
+  if (!data || data.length === 0) return null;
+  const values = data
+    .map(row => toNumber(row['Stress Level']))
+    .filter(v => v !== null);
+  
+  if (values.length === 0) return null;
+  const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+  return Math.round(avg * 100) / 100;
+};
+
+/**
+ * Get average daily steps
+ */
+export const getAverageDailySteps = (data) => {
+  if (!data || data.length === 0) return null;
+  const values = data
+    .map(row => toNumber(row['Daily Steps']))
+    .filter(v => v !== null);
+  
+  if (values.length === 0) return null;
+  const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+  return Math.round(avg);
+};
+
+/**
+ * Get average heart rate in bpm
+ */
+export const getAverageHeartRate = (data) => {
+  if (!data || data.length === 0) return null;
+  const values = data
+    .map(row => toNumber(row['Heart Rate']))
+    .filter(v => v !== null);
+  
+  if (values.length === 0) return null;
+  const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+  return Math.round(avg);
+};
+
+/**
+ * Get percentage of people with sleep disorders (not "None")
+ */
+export const getSleepDisorderPercentage = (data) => {
+  if (!data || data.length === 0) return null;
+  const disorderCount = data.filter(row => row['Sleep Disorder'] !== 'None').length;
+  const percentage = (disorderCount / data.length) * 100;
+  return Math.round(percentage * 100) / 100;
+};
