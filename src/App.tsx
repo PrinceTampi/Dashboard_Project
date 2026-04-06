@@ -7,21 +7,17 @@ import { parseCSV, cleanData } from './utils/parseCSV'
 // @ts-expect-error
 import { detectSchema } from './utils/detectSchema'
 // @ts-expect-error
-import { generateKPIs } from './utils/generateKPIs'
-// @ts-expect-error
-import { generateCharts } from './utils/generateCharts'
-// @ts-expect-error
 import { generateInsights } from './utils/generateInsights'
 
 // Import components
 // @ts-expect-error
 import KPISection from './components/KPISection'
 // @ts-expect-error
-import DynamicCharts from './components/DynamicCharts'
+import FilteredCharts from './components/FilteredCharts'
 // @ts-expect-error
 import Filters from './components/Filters'
 // @ts-expect-error
-import InsightsSection from './components/InsightsSection'
+import InsightSummary from './components/InsightSummary'
 
 function App() {
   const [rawData, setRawData] = useState<any[]>([])
@@ -92,24 +88,6 @@ function App() {
     })
   }, [rawData, filters])
 
-  // Generate KPIs
-  const kpis = useMemo(() => {
-    if (!filteredData || !schema || !schema.numeric) return {}
-    return generateKPIs(filteredData, schema)
-  }, [filteredData, schema])
-
-  // Generate charts
-  const charts = useMemo(() => {
-    if (!filteredData || !schema) return []
-    return generateCharts(filteredData, schema)
-  }, [filteredData, schema])
-
-  // Generate insights
-  const insights = useMemo(() => {
-    if (!rawData || !schema) return []
-    return generateInsights(rawData, schema)
-  }, [rawData, schema])
-
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters)
   }
@@ -120,12 +98,12 @@ function App() {
       <div className="dashboard">
         <header className="dashboard-header">
           <div className="header-content">
-            <h1>Smart Data Dashboard</h1>
+            <h1>Sleep Health Dashboard 😴</h1>
             <p>Loading data...</p>
           </div>
         </header>
         <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>
-          <p>⏳ Processing CSV data, detecting schema, generating visualizations...</p>
+          <p>⏳ Memproses data CSV, mendeteksi schema, menghasilkan visualisasi...</p>
         </div>
       </div>
     )
@@ -137,14 +115,14 @@ function App() {
       <div className="dashboard">
         <header className="dashboard-header">
           <div className="header-content">
-            <h1>Smart Data Dashboard</h1>
+            <h1>Sleep Health Dashboard 😴</h1>
             <p>Error loading data</p>
           </div>
         </header>
         <div style={{ padding: '40px', textAlign: 'center', color: '#d9534f' }}>
           <p>❌ {error}</p>
           <p style={{ marginTop: '10px', color: '#888', fontSize: '14px' }}>
-            Make sure /public/data.csv exists and is formatted correctly.
+            Pastikan /public/Sleep_health_and_lifestyle_dataset.csv ada dan formatnya benar.
           </p>
         </div>
       </div>
@@ -157,12 +135,12 @@ function App() {
       <div className="dashboard">
         <header className="dashboard-header">
           <div className="header-content">
-            <h1>Smart Data Dashboard</h1>
+            <h1>Sleep Health Dashboard 😴</h1>
             <p>No data available</p>
           </div>
         </header>
         <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>
-          <p>No CSV data loaded. Please check the data file.</p>
+          <p>Data CSV tidak ditemukan. Silakan periksa file data.</p>
         </div>
       </div>
     )
@@ -173,49 +151,82 @@ function App() {
       {/* Header */}
       <header className="dashboard-header">
         <div className="header-content">
-          <h1>🚀 Smart Data Dashboard</h1>
-          <p>Auto-adaptive visualization with schema detection, KPI generation, and AI insights</p>
-        </div>
-        <div className="header-controls">
-          <button className="btn btn-primary">Export Data</button>
-          <button className="btn btn-secondary">Settings</button>
+          <h1>🌙 Sleep Health & Lifestyle Dashboard</h1>
+          <p>Analisis komprehensif kesehatan tidur, stress, dan aktivitas fisik</p>
         </div>
       </header>
 
       {/* Data Summary */}
-      <div style={{ padding: '20px', background: '#1e1e1e', borderBottom: '1px solid #2d2d2d', color: '#aaa', fontSize: '14px' }}>
-        📊 Dataset: {rawData.length} rows | 
-        {schema && `Columns: ${schema.allColumns.length} (${schema.numeric.length} numeric, ${schema.categorical.length} categorical, ${schema.date.length} date)`}
-        {filteredData.length < rawData.length && ` | Filtered: ${filteredData.length} rows`}
+      <div style={{
+        padding: '15px 20px',
+        background: 'var(--accent-bg)',
+        borderBottom: '1px solid var(--accent-border)',
+        color: 'var(--text-h)',
+        fontSize: '14px',
+        fontWeight: '500'
+      }}>
+        📊 Dataset: {rawData.length} responden |
+        {schema && ` Total Kolom: ${schema.allColumns.length}`}
+        {filteredData.length < rawData.length && ` | Filtered: ${filteredData.length} responden`}
       </div>
 
-      {/* Filters Section */}
-      {schema && <Filters schema={schema} data={rawData} onFilterChange={handleFilterChange} />}
+      {/* Main Layout: Horizontal (Filter Left + Content Right) */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '250px 1fr',
+        gap: '0',
+        minHeight: 'calc(100vh - 200px)'
+      }}>
+        {/* Left Column: Filters (Sticky) */}
+        <div style={{
+          backgroundColor: 'var(--bg)',
+          borderRight: '1px solid var(--border)',
+          padding: '20px',
+          position: 'sticky',
+          top: 0,
+          height: 'fit-content',
+          maxHeight: '100vh',
+          overflowY: 'auto'
+        }}>
+          {schema && <Filters schema={schema} data={rawData} onFilterChange={handleFilterChange} />}
+        </div>
 
-      {/* KPI Section */}
-      {schema && schema.numeric && schema.numeric.length > 0 && (
-        <section className="kpi-section">
-          <h2>Key Performance Indicators</h2>
-          <KPISection kpis={kpis} />
-        </section>
-      )}
+        {/* Right Column: Main Content (2 Sections) */}
+        <div style={{
+          padding: '30px',
+          overflowY: 'auto'
+        }}>
+          {/* SECTION 1: Main Dashboard (Filtered Data) */}
+          <div style={{ marginBottom: '40px' }}>
+            {/* KPI Section */}
+            <KPISection filteredData={filteredData} />
 
-      {/* Charts Section */}
-      <section className="charts-section">
-        <h2>Dynamic Visualizations</h2>
-        <DynamicCharts charts={charts} />
-      </section>
+            {/* Charts Section with Tabs */}
+            <FilteredCharts filteredData={filteredData} />
+          </div>
 
-      {/* Insights Section */}
-      {insights && insights.length > 0 && (
-        <section className="insights-section">
-          <InsightsSection insights={insights} />
-        </section>
-      )}
+          {/* SECTION 2: Insight Summary (Static, from All Data) */}
+          <div style={{
+            marginTop: '50px',
+            paddingTop: '30px',
+            borderTop: '2px solid var(--border)'
+          }}>
+            <InsightSummary allData={rawData} />
+          </div>
+        </div>
+      </div>
 
       {/* Footer */}
-      <footer style={{ padding: '20px', textAlign: 'center', color: '#888', borderTop: '1px solid #2d2d2d', marginTop: '40px', fontSize: '12px' }}>
-        <p>Smart Dashboard • CSV Auto-Detection • Dynamic Schema Analysis</p>
+      <footer style={{
+        padding: '20px',
+        textAlign: 'center',
+        color: '#888',
+        borderTop: '1px solid var(--border)',
+        marginTop: '40px',
+        fontSize: '12px',
+        backgroundColor: 'var(--bg)'
+      }}>
+        <p>Sleep Health Dashboard • Analisis berbasis filter dengan insights global</p>
       </footer>
     </div>
   )

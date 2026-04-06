@@ -479,6 +479,389 @@ export const generateBoxPlotConfig = (data, numericField, filters = null) => {
 };
 
 /**
+ * Sleep Health Dashboard - Specialized Chart Generators
+ */
+
+/**
+ * Chart 1: Line Chart - Pengaruh Stres terhadap Kualitas Tidur
+ * X: Stress Level (1-10), Y: Average Quality of Sleep
+ */
+export const generateStressVsSleepQualityChart = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  // Group by Stress Level
+  const groupedByStress = {};
+  filteredData.forEach(row => {
+    const stress = toNumber(row['Stress Level']);
+    const quality = toNumber(row['Quality of Sleep']);
+    
+    if (stress !== null && quality !== null) {
+      if (!groupedByStress[stress]) {
+        groupedByStress[stress] = [];
+      }
+      groupedByStress[stress].push(quality);
+    }
+  });
+
+  // Calculate average quality per stress level
+  const chartData = Object.entries(groupedByStress)
+    .map(([stress, qualities]) => ({
+      stressLevel: parseInt(stress),
+      avgQuality: Math.round((qualities.reduce((a, b) => a + b, 0) / qualities.length) * 100) / 100
+    }))
+    .sort((a, b) => a.stressLevel - b.stressLevel);
+
+  return {
+    type: 'line',
+    title: 'Pengaruh Stres terhadap Kualitas Tidur',
+    xAxis: { dataKey: 'stressLevel', label: 'Tingkat Stres (1-10)', type: 'number' },
+    yAxis: { label: 'Rata-rata Kualitas Tidur (/10)' },
+    lines: [{ dataKey: 'avgQuality', stroke: '#0066cc', strokeWidth: 2, name: 'Kualitas Tidur' }],
+    data: chartData,
+    canRender: chartData.length > 0
+  };
+};
+
+/**
+ * Chart 2: Bar Chart - Durasi Tidur per Pekerjaan (Top 8)
+ */
+export const generateSleepDurationByOccupationChart = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  // Group by Occupation
+  const groupedByOccupation = {};
+  filteredData.forEach(row => {
+    const occupation = String(row['Occupation']).trim();
+    const duration = toNumber(row['Sleep Duration']);
+    
+    if (occupation && duration !== null) {
+      if (!groupedByOccupation[occupation]) {
+        groupedByOccupation[occupation] = [];
+      }
+      groupedByOccupation[occupation].push(duration);
+    }
+  });
+
+  // Calculate average duration per occupation
+  const chartData = Object.entries(groupedByOccupation)
+    .map(([occupation, durations]) => ({
+      occupation,
+      avgDuration: Math.round((durations.reduce((a, b) => a + b, 0) / durations.length) * 100) / 100
+    }))
+    .sort((a, b) => b.avgDuration - a.avgDuration)
+    .slice(0, 8); // Top 8
+
+  return {
+    type: 'bar',
+    title: 'Durasi Tidur per Pekerjaan (Top 8)',
+    xAxis: { dataKey: 'occupation', label: 'Pekerjaan' },
+    yAxis: { label: 'Rata-rata Durasi Tidur (jam)' },
+    bars: [{ dataKey: 'avgDuration', fill: '#00aa44', name: 'Durasi Tidur (jam)' }],
+    data: chartData,
+    canRender: chartData.length > 0
+  };
+};
+
+/**
+ * Chart 3: Donut Chart - Distribusi Gangguan Tidur
+ */
+export const generateSleepDisorderDistribution = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  // Count sleep disorders
+  const disorderCounts = {};
+  filteredData.forEach(row => {
+    const disorder = String(row['Sleep Disorder']).trim();
+    disorderCounts[disorder] = (disorderCounts[disorder] || 0) + 1;
+  });
+
+  const total = filteredData.length;
+  const chartData = Object.entries(disorderCounts)
+    .map(([disorder, count]) => ({
+      name: disorder,
+      value: count,
+      percentage: Math.round((count / total) * 100 * 100) / 100
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  const COLORS = ['#00cc00', '#ff6666', '#ffaa00'];
+
+  const chartDataWithColor = chartData.map((item, index) => ({
+    ...item,
+    fill: COLORS[index % COLORS.length]
+  }));
+
+  return {
+    type: 'donut',
+    title: 'Distribusi Gangguan Tidur',
+    data: chartDataWithColor,
+    dataKey: 'value',
+    nameKey: 'name',
+    canRender: chartData.length > 0
+  };
+};
+
+/**
+ * Chart 4: Grouped Bar Chart - Kategori BMI vs Kualitas Tidur & Stres
+ */
+export const generateBMIVsQualityStressChart = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  // Group by BMI Category
+  const groupedByBMI = {};
+  filteredData.forEach(row => {
+    const bmi = String(row['BMI Category']).trim();
+    const quality = toNumber(row['Quality of Sleep']);
+    const stress = toNumber(row['Stress Level']);
+    
+    if (bmi && quality !== null && stress !== null) {
+      if (!groupedByBMI[bmi]) {
+        groupedByBMI[bmi] = { qualities: [], stresses: [] };
+      }
+      groupedByBMI[bmi].qualities.push(quality);
+      groupedByBMI[bmi].stresses.push(stress);
+    }
+  });
+
+  const chartData = Object.entries(groupedByBMI)
+    .map(([bmi, data]) => ({
+      bmi,
+      avgQuality: Math.round((data.qualities.reduce((a, b) => a + b, 0) / data.qualities.length) * 100) / 100,
+      avgStress: Math.round((data.stresses.reduce((a, b) => a + b, 0) / data.stresses.length) * 100) / 100
+    }));
+
+  return {
+    type: 'groupedBar',
+    title: 'Kategori BMI vs Kualitas Tidur & Stres',
+    xAxis: { dataKey: 'bmi', label: 'Kategori BMI' },
+    yAxis: { label: 'Nilai (Kualitas Tidur /10 atau Stres /10)' },
+    bars: [
+      { dataKey: 'avgQuality', fill: '#0066cc', name: 'Kualitas Tidur' },
+      { dataKey: 'avgStress', fill: '#ff0000', name: 'Tingkat Stres' }
+    ],
+    data: chartData,
+    canRender: chartData.length > 0
+  };
+};
+
+/**
+ * Chart 5: Scatter Plot - Usia vs Durasi Tidur (dengan warna berdasarkan Heart Rate)
+ */
+export const generateAgeVsSleepDurationChart = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  const chartData = filteredData
+    .map((row, idx) => {
+      const age = toNumber(row['Age']);
+      const duration = toNumber(row['Sleep Duration']);
+      const heartRate = toNumber(row['Heart Rate']);
+      
+      if (age !== null && duration !== null && heartRate !== null) {
+        let hrColor = '#00cc00'; // green
+        if (heartRate >= 70 && heartRate <= 80) {
+          hrColor = '#ffaa00'; // yellow
+        } else if (heartRate > 80) {
+          hrColor = '#ff0000'; // red
+        }
+        
+        return {
+          age,
+          duration,
+          heartRate,
+          name: `Age ${age}`,
+          fill: hrColor
+        };
+      }
+      return null;
+    })
+    .filter(item => item !== null);
+
+  return {
+    type: 'scatter',
+    title: 'Usia vs Durasi Tidur (warna: Denyut Jantung)',
+    xAxis: { dataKey: 'age', label: 'Usia (tahun)', type: 'number' },
+    yAxis: { dataKey: 'duration', label: 'Durasi Tidur (jam)', type: 'number' },
+    data: chartData,
+    canRender: chartData.length > 1,
+    colors: { green: '#00cc00', yellow: '#ffaa00', red: '#ff0000' }
+  };
+};
+
+/**
+ * Chart 6: Horizontal Bar Chart - Aktivitas Fisik berdasarkan Gangguan Tidur
+ */
+export const generatePhysicalActivityBySleepDisorder = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  // Group by Sleep Disorder
+  const groupedByDisorder = {};
+  filteredData.forEach(row => {
+    const disorder = String(row['Sleep Disorder']).trim();
+    const activity = toNumber(row['Physical Activity Level']);
+    
+    if (disorder && activity !== null) {
+      if (!groupedByDisorder[disorder]) {
+        groupedByDisorder[disorder] = [];
+      }
+      groupedByDisorder[disorder].push(activity);
+    }
+  });
+
+  const chartData = Object.entries(groupedByDisorder)
+    .map(([disorder, activities]) => ({
+      disorder,
+      avgActivity: Math.round((activities.reduce((a, b) => a + b, 0) / activities.length) * 100) / 100
+    }));
+
+  return {
+    type: 'horizontalBar',
+    title: 'Aktivitas Fisik berdasarkan Gangguan Tidur',
+    xAxis: { label: 'Rata-rata Aktivitas Fisik (menit/hari)', type: 'number' },
+    yAxis: { dataKey: 'disorder', label: 'Gangguan Tidur' },
+    bars: [{ dataKey: 'avgActivity', fill: '#9900cc', name: 'Aktivitas Fisik' }],
+    data: chartData,
+    canRender: chartData.length > 0
+  };
+};
+
+/**
+ * Chart 7: Stacked Bar Chart - Pekerjaan vs Gangguan Tidur
+ */
+export const generateOccupationVsSleepDisorderChart = (data, filters = null) => {
+  if (!data || data.length === 0) return null;
+
+  let filteredData = data;
+  if (filters && Object.keys(filters).length > 0) {
+    filteredData = data.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value || value.length === 0) return true;
+        if (Array.isArray(value)) {
+          return value.includes(String(row[key]));
+        }
+        return String(row[key]) === String(value);
+      });
+    });
+  }
+
+  // Group by Occupation and Sleep Disorder
+  const groupedByOccupation = {};
+  filteredData.forEach(row => {
+    const occupation = String(row['Occupation']).trim();
+    const disorder = String(row['Sleep Disorder']).trim();
+    
+    if (occupation) {
+      if (!groupedByOccupation[occupation]) {
+        groupedByOccupation[occupation] = { None: 0, Insomnia: 0, 'Sleep Apnea': 0 };
+      }
+      groupedByOccupation[occupation][disorder] = (groupedByOccupation[occupation][disorder] || 0) + 1;
+    }
+  });
+
+  const chartData = Object.entries(groupedByOccupation)
+    .map(([occupation, disorders]) => ({
+      occupation,
+      None: disorders['None'] || 0,
+      Insomnia: disorders['Insomnia'] || 0,
+      'Sleep Apnea': disorders['Sleep Apnea'] || 0,
+      total: Object.values(disorders).reduce((a, b) => a + b, 0)
+    }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 6); // Top 6
+
+  return {
+    type: 'stackedBar',
+    title: 'Pekerjaan vs Gangguan Tidur (Top 6)',
+    xAxis: { dataKey: 'occupation', label: 'Pekerjaan' },
+    yAxis: { label: 'Jumlah Orang' },
+    bars: [
+      { dataKey: 'None', fill: '#00cc00', stackId: 'a', name: 'Tidak Ada' },
+      { dataKey: 'Insomnia', fill: '#ff6666', stackId: 'a', name: 'Insomnia' },
+      { dataKey: 'Sleep Apnea', fill: '#ffaa00', stackId: 'a', name: 'Sleep Apnea' }
+    ],
+    data: chartData,
+    canRender: chartData.length > 0
+  };
+};
+
+/**
  * Generate all applicable charts based on schema
  */
 export const generateCharts = (data, schema, filters = null) => {
