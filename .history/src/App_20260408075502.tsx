@@ -240,30 +240,6 @@ function App() {
           gap: "10px",
         }}
       >
-        <a
-          href="https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            padding: "8px 16px",
-            background: "#6c757d",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "500",
-            transition: "background-color 0.3s ease",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            textDecoration: "none",
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.background = "#5a6268")}
-          onMouseOut={(e) => (e.currentTarget.style.background = "#6c757d")}
-        >
-          🔗 Sumber Data
-        </a>
         <button
           onClick={handleExportPDF}
           style={{

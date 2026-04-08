@@ -182,55 +182,40 @@ const InsightSummary = ({ allData }) => {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: "20px",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "30px",
               }}
             >
-              {/* Card 1: Total Data */}
-              <div
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
+              {/* Column 1: Data Summary */}
+              <div>
+                <h4
                   style={{
+                    color: "var(--text-h)",
+                    marginBottom: "20px",
+                    paddingBottom: "10px",
+                    borderBottom: "2px solid var(--accent)",
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "15px",
-                    gap: "10px",
+                    gap: "8px",
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>📊</span>
-                  <h5
-                    style={{
-                      color: "var(--text-h)",
-                      margin: "0",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Total Data
-                  </h5>
-                </div>
+                  <span style={{ fontSize: "20px" }}>📊</span>
+                  Total Data
+                </h4>
                 <div
                   style={{
                     backgroundColor: "var(--accent-bg)",
-                    padding: "20px",
+                    padding: "15px",
                     borderRadius: "8px",
-                    textAlign: "center",
-                    marginBottom: "15px",
+                    marginBottom: "20px",
                   }}
                 >
                   <div
                     style={{
-                      fontSize: "32px",
+                      fontSize: "24px",
                       fontWeight: "bold",
                       color: "var(--accent)",
-                      marginBottom: "5px",
+                      textAlign: "center",
                     }}
                   >
                     {insights.totalData.toLocaleString()}
@@ -239,330 +224,231 @@ const InsightSummary = ({ allData }) => {
                     style={{
                       fontSize: "14px",
                       color: "var(--text)",
+                      textAlign: "center",
+                      marginTop: "5px",
                     }}
                   >
                     Responden
                   </div>
                 </div>
-              </div>
 
-              {/* Card 2: Rata-rata */}
-              <div
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
+                <h5
                   style={{
-                    display: "flex",
-                    alignItems: "center",
+                    color: "var(--text-h)",
                     marginBottom: "15px",
-                    gap: "10px",
+                    fontSize: "16px",
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>📈</span>
-                  <h5
-                    style={{
-                      color: "var(--text-h)",
-                      margin: "0",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Rata-rata
-                  </h5>
-                </div>
-                <div
+                  Rata-rata
+                </h5>
+                <ul
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
                   }}
                 >
                   {insights.averages.map((avg, idx) => (
-                    <div
+                    <li
                       key={idx}
                       style={{
-                        backgroundColor: "var(--bg)",
-                        padding: "12px 15px",
-                        borderRadius: "6px",
-                        borderLeft: "3px solid var(--accent)",
+                        marginBottom: "10px",
+                        padding: "8px 12px",
+                        backgroundColor: "var(--bg-secondary)",
+                        borderRadius: "4px",
                         fontSize: "14px",
                         color: "var(--text)",
-                        fontWeight: "500",
                       }}
                     >
                       {avg}
-                    </div>
+                    </li>
                   ))}
-                </div>
-              </div>
+                </ul>
 
-              {/* Card 3: Statistik Penting */}
-              <div
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
+                <h5
                   style={{
-                    display: "flex",
-                    alignItems: "center",
+                    color: "var(--text-h)",
+                    marginTop: "20px",
                     marginBottom: "15px",
-                    gap: "10px",
+                    fontSize: "16px",
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>📋</span>
-                  <h5
-                    style={{
-                      color: "var(--text-h)",
-                      margin: "0",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Statistik Penting
-                  </h5>
-                </div>
-                <div
+                  Statistik Penting
+                </h5>
+                <ul
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
                   }}
                 >
                   {insights.statistics.map((stat, idx) => (
-                    <div
+                    <li
                       key={idx}
                       style={{
-                        backgroundColor: "var(--bg)",
-                        padding: "12px 15px",
-                        borderRadius: "6px",
-                        borderLeft: "3px solid #17a2b8",
+                        marginBottom: "10px",
+                        padding: "8px 12px",
+                        backgroundColor: "var(--bg-secondary)",
+                        borderRadius: "4px",
                         fontSize: "14px",
                         color: "var(--text)",
-                        fontWeight: "500",
                       }}
                     >
                       {stat}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              {/* Card 4: Apa insight utama dari data? */}
-              <div
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
+              {/* Column 2: Insights & Analysis */}
+              <div>
+                <h4
                   style={{
+                    color: "var(--text-h)",
+                    marginBottom: "20px",
+                    paddingBottom: "10px",
+                    borderBottom: "2px solid #00aa44",
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "15px",
-                    gap: "10px",
+                    gap: "8px",
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>💡</span>
-                  <h5
-                    style={{
-                      color: "var(--text-h)",
-                      margin: "0",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Apa insight utama dari data?
-                  </h5>
-                </div>
-                <div
+                  <span style={{ fontSize: "20px" }}>💡</span>
+                  Apa insight utama dari data?
+                </h4>
+                <ul
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
                   }}
                 >
                   {insights.mainInsights.map((insight, idx) => (
-                    <div
+                    <li
                       key={idx}
                       style={{
-                        backgroundColor: "var(--bg)",
-                        padding: "15px",
-                        borderRadius: "8px",
-                        borderLeft: "4px solid #00aa44",
-                        fontSize: "14px",
-                        color: "var(--text)",
-                        lineHeight: "1.5",
+                        marginBottom: "15px",
+                        paddingLeft: "20px",
                         position: "relative",
+                        lineHeight: "1.6",
+                        color: "var(--text)",
+                        fontSize: "14px",
                       }}
                     >
                       <span
                         style={{
                           position: "absolute",
-                          top: "15px",
-                          left: "12px",
+                          left: "0",
                           color: "#00aa44",
-                          fontSize: "18px",
                           fontWeight: "bold",
                         }}
                       >
                         •
                       </span>
-                      <div style={{ marginLeft: "20px" }}>{insight}</div>
-                    </div>
+                      {insight}
+                    </li>
                   ))}
-                </div>
-              </div>
+                </ul>
 
-              {/* Card 5: Tren apa yang ditemukan? */}
-              <div
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
+                <h4
                   style={{
+                    color: "var(--text-h)",
+                    marginTop: "30px",
+                    marginBottom: "20px",
+                    paddingBottom: "10px",
+                    borderBottom: "2px solid #ff9900",
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "15px",
-                    gap: "10px",
+                    gap: "8px",
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>📈</span>
-                  <h5
-                    style={{
-                      color: "var(--text-h)",
-                      margin: "0",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Tren apa yang ditemukan?
-                  </h5>
-                </div>
-                <div
+                  <span style={{ fontSize: "20px" }}>📈</span>
+                  Tren apa yang ditemukan?
+                </h4>
+                <ul
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
                   }}
                 >
                   {insights.trends.map((trend, idx) => (
-                    <div
+                    <li
                       key={idx}
                       style={{
-                        backgroundColor: "var(--bg)",
-                        padding: "15px",
-                        borderRadius: "8px",
-                        borderLeft: "4px solid #ff9900",
-                        fontSize: "14px",
-                        color: "var(--text)",
-                        lineHeight: "1.5",
+                        marginBottom: "15px",
+                        paddingLeft: "20px",
                         position: "relative",
+                        lineHeight: "1.6",
+                        color: "var(--text)",
+                        fontSize: "14px",
                       }}
                     >
                       <span
                         style={{
                           position: "absolute",
-                          top: "15px",
-                          left: "12px",
+                          left: "0",
                           color: "#ff9900",
-                          fontSize: "18px",
                           fontWeight: "bold",
                         }}
                       >
                         •
                       </span>
-                      <div style={{ marginLeft: "20px" }}>{trend}</div>
-                    </div>
+                      {trend}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              {/* Card 6: Apa rekomendasi berdasarkan data? */}
-              <div
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
+              {/* Column 3: Recommendations */}
+              <div>
+                <h4
                   style={{
+                    color: "var(--text-h)",
+                    marginBottom: "20px",
+                    paddingBottom: "10px",
+                    borderBottom: "2px solid #dc3545",
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "15px",
-                    gap: "10px",
+                    gap: "8px",
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>🎯</span>
-                  <h5
-                    style={{
-                      color: "var(--text-h)",
-                      margin: "0",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Apa rekomendasi berdasarkan data?
-                  </h5>
-                </div>
-                <div
+                  <span style={{ fontSize: "20px" }}>🎯</span>
+                  Apa rekomendasi berdasarkan data?
+                </h4>
+                <ul
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
                   }}
                 >
                   {insights.recommendations.map((rec, idx) => (
-                    <div
+                    <li
                       key={idx}
                       style={{
-                        backgroundColor: "var(--bg)",
-                        padding: "15px",
-                        borderRadius: "8px",
-                        borderLeft: "4px solid #dc3545",
-                        fontSize: "14px",
-                        color: "var(--text)",
-                        lineHeight: "1.5",
+                        marginBottom: "15px",
+                        paddingLeft: "20px",
                         position: "relative",
+                        lineHeight: "1.6",
+                        color: "var(--text)",
+                        fontSize: "14px",
                       }}
                     >
                       <span
                         style={{
                           position: "absolute",
-                          top: "15px",
-                          left: "12px",
+                          left: "0",
                           color: "#dc3545",
-                          fontSize: "18px",
                           fontWeight: "bold",
                         }}
                       >
                         •
                       </span>
-                      <div style={{ marginLeft: "20px" }}>{rec}</div>
-                    </div>
+                      {rec}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             </div>
           </Accordion.Body>
