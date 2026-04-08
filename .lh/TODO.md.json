@@ -1,0 +1,18 @@
+{
+    "sourceFile": "TODO.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1775610817049,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1775610817049,
+            "name": "Commit-0",
+            "content": "# PDF Export Fix TODO\r\n\r\n## Steps:\r\n- [ ] Read src/utils/detectSchema.js to understand data/schema structure\r\n- [ ] Update exportPDF.js with plan\r\n- [ ] Test PDF export\r\n- [ ] attempt_completion\r\n\r\nUpdated after each step.\r\n"
+        }
+    ]
+}

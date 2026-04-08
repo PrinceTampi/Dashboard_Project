@@ -115,26 +115,8 @@ export const exportDashboardToPDF = async (
     pdf.addPage();
     yPosition = margin;
 
-    // Use dynamic KPIs and insights from generators
-    const kpis = generateKPIs(filteredData || rawData, schema);
-    const dynamicInsights = generateInsights(rawData, schema);
-
-    // Format KPIs for display
-    const kpiDisplay = Object.entries(kpis).map(([key, values]) => {
-      const avg = values.avg.toFixed(2);
-      return `${key}: ${avg}`;
-    });
-
-    // Group insights by type for PDF sections
-    const groupedInsights = {
-      trends: dynamicInsights.filter((i) => i.type === "trend"),
-      correlations: dynamicInsights.filter((i) => i.type === "correlation"),
-      anomalies: dynamicInsights.filter((i) => i.type === "anomaly"),
-      distributions: dynamicInsights.filter((i) => i.type === "distribution"),
-      summary: dynamicInsights.find((i) => i.isSummary),
-    };
-
-    const totalRespondents = rawData.length.toLocaleString();
+    // Extract data
+    const { data, insights } = extractDashboardData();
 
     // Wait a bit for data extraction
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -142,7 +124,7 @@ export const exportDashboardToPDF = async (
     // Add Executive Summary
     yPosition = addSectionHeader("Executive Summary", "📊", yPosition + 10);
     yPosition = addWrappedText(
-      `Laporan analisis kesehatan tidur dari ${totalRespondents} responden. Filtered: ${filteredCount} records. Insights generated: ${dynamicInsights.length}.`,
+      `Laporan ini berisi analisis komprehensif data kesehatan tidur dari ${data.totalRespondents || "374"} responden. Analisis mencakup pola tidur, tingkat stres, aktivitas fisik, dan faktor-faktor yang mempengaruhinya.`,
       margin,
       yPosition,
       contentWidth,
@@ -155,14 +137,33 @@ export const exportDashboardToPDF = async (
     yPosition = addSectionHeader("Key Performance Indicators", "📈", yPosition);
     yPosition += 5;
 
-    // Dynamic KPIs
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "bold");
-    kpiDisplay.slice(0, 6).forEach((kpi) => {
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`• ${kpi}`, margin + 5, yPosition);
-      yPosition += 6;
-    });
+    if (data.kpis && data.kpis.length > 0) {
+      data.kpis.forEach((kpi, index) => {
+        if (kpi.length > 10) {
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(60, 60, 60);
+          pdf.text(`• ${kpi}`, margin + 5, yPosition);
+          yPosition += 6;
+        }
+      });
+    } else {
+      // Default KPIs if not found
+      const defaultKPIs = [
+        "Rata-rata Durasi Tidur: 7.13 jam",
+        "Rata-rata Kualitas Tidur: 7.31/10",
+        "Rata-rata Tingkat Stres: 5.39/10",
+        "Rata-rata Langkah Harian: 6,817 langkah",
+        "Persentase Gangguan Tidur: 41.44%",
+      ];
+      defaultKPIs.forEach((kpi) => {
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(60, 60, 60);
+        pdf.text(`• ${kpi}`, margin + 5, yPosition);
+        yPosition += 6;
+      });
+    }
 
     yPosition += 10;
 

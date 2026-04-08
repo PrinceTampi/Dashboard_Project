@@ -1,13 +1,4 @@
 import html2canvas from "html2canvas";
-import {
-  getAverageSleepDuration,
-  getAverageSleepQuality,
-  getAverageStressLevel,
-  getAverageDailySteps,
-  getAverageHeartRate,
-  getSleepDisorderPercentage,
-} from "./generateKPIs.js";
-import { generateKPIs, generateInsights } from "./generateKPIs.js";
 import jsPDF from "jspdf";
 
 export const exportDashboardToPDF = async (
@@ -115,26 +106,182 @@ export const exportDashboardToPDF = async (
     pdf.addPage();
     yPosition = margin;
 
-    // Use dynamic KPIs and insights from generators
-    const kpis = generateKPIs(filteredData || rawData, schema);
-    const dynamicInsights = generateInsights(rawData, schema);
+    // Extract data from the dashboard
+    const extractDashboardData = () => {
+      const data = {};
 
-    // Format KPIs for display
-    const kpiDisplay = Object.entries(kpis).map(([key, values]) => {
-      const avg = values.avg.toFixed(2);
-      return `${key}: ${avg}`;
-    });
+      // Get dataset info
+      const datasetInfo = document.querySelector(".dashboard");
+      if (datasetInfo) {
+        const datasetText = datasetInfo.textContent || "";
+        const datasetMatch = datasetText.match(/Dataset: (\d+) responden/);
+        if (datasetMatch) {
+          data.totalRespondents = datasetMatch[1];
+        }
+      }
 
-    // Group insights by type for PDF sections
-    const groupedInsights = {
-      trends: dynamicInsights.filter((i) => i.type === "trend"),
-      correlations: dynamicInsights.filter((i) => i.type === "correlation"),
-      anomalies: dynamicInsights.filter((i) => i.type === "anomaly"),
-      distributions: dynamicInsights.filter((i) => i.type === "distribution"),
-      summary: dynamicInsights.find((i) => i.isSummary),
+      // Get KPI data
+      const kpis = [];
+      const kpiElements = document.querySelectorAll(
+        '.kpi-card, [class*="kpi"]',
+      );
+      kpiElements.forEach((kpi) => {
+        const text = kpi.textContent || "";
+        if (
+          text.includes("Durasi Tidur") ||
+          text.includes("Kualitas Tidur") ||
+          text.includes("Tingkat Stres") ||
+          text.includes("Langkah Harian") ||
+          text.includes("Detak Jantung") ||
+          text.includes("Gangguan Tidur")
+        ) {
+          kpis.push(text.trim());
+        }
+      });
+
+      // If no KPIs found, try to get from the actual KPI section
+      if (kpis.length === 0) {
+        const kpiSection = document.querySelector(
+          '[class*="KPI"], [class*="kpi"]',
+        );
+        if (kpiSection) {
+          const kpiItems = kpiSection.querySelectorAll("*");
+          kpiItems.forEach((item) => {
+            const text = item.textContent || "";
+            if (
+              text.length > 10 &&
+              text.length < 100 &&
+              (text.includes("jam") ||
+                text.includes("/10") ||
+                text.includes("bpm") ||
+                text.includes("langkah") ||
+                text.includes("%"))
+            ) {
+              kpis.push(text.trim());
+            }
+          });
+        }
+      }
+
+      data.kpis = kpis;
+
+      // Get insights data by expanding accordions temporarily
+      const accordions = document.querySelectorAll(".accordion-item");
+      const insights = {
+        totalData: "",
+        averages: [],
+        statistics: [],
+        mainInsights: [],
+        trends: [],
+        recommendations: [],
+      };
+
+      accordions.forEach((accordion) => {
+        const header = accordion.querySelector(".accordion-header button");
+        const body = accordion.querySelector(".accordion-collapse");
+
+        if (header && body && !body.classList.contains("show")) {
+          // Temporarily expand
+          body.classList.add("show");
+          body.style.display = "block";
+        }
+      });
+
+      // Extract data after expansion
+      setTimeout(() => {
+        // Total Data
+        const totalDataCard = document.querySelector(".accordion-body");
+        if (totalDataCard) {
+          const totalDataText = totalDataCard.textContent || "";
+          const totalMatch = totalDataText.match(/(\d+(?:,\d+)*)\s*Responden/i);
+          if (totalMatch) {
+            insights.totalData = totalMatch[1];
+          }
+        }
+
+        // Averages
+        const avgElements = document.querySelectorAll(
+          '.accordion-body [style*="border-left: 3px solid"]',
+        );
+        avgElements.forEach((el) => {
+          const text = el.textContent?.trim() || "";
+          if (
+            text.includes("jam") ||
+            text.includes("/10") ||
+            text.includes("level") ||
+            text.includes("langkah")
+          ) {
+            insights.averages.push(text);
+          }
+        });
+
+        // Statistics
+        const statElements = document.querySelectorAll(
+          '.accordion-body [style*="border-left: 3px solid #17a2b8"]',
+        );
+        statElements.forEach((el) => {
+          const text = el.textContent?.trim() || "";
+          if (
+            text.includes("%") ||
+            text.includes("tahun") ||
+            text.includes("Laki-laki")
+          ) {
+            insights.statistics.push(text);
+          }
+        });
+
+        // Main Insights
+        const insightElements = document.querySelectorAll(
+          '.accordion-body [style*="border-left: 4px solid #00aa44"]',
+        );
+        insightElements.forEach((el) => {
+          const text = el.textContent?.trim() || "";
+          if (
+            text.length > 20 &&
+            !text.includes("jam") &&
+            !text.includes("/10")
+          ) {
+            insights.mainInsights.push(text);
+          }
+        });
+
+        // Trends
+        const trendElements = document.querySelectorAll(
+          '.accordion-body [style*="border-left: 4px solid #ff9900"]',
+        );
+        trendElements.forEach((el) => {
+          const text = el.textContent?.trim() || "";
+          if (text.length > 20) {
+            insights.trends.push(text);
+          }
+        });
+
+        // Recommendations
+        const recElements = document.querySelectorAll(
+          '.accordion-body [style*="border-left: 4px solid #dc3545"]',
+        );
+        recElements.forEach((el) => {
+          const text = el.textContent?.trim() || "";
+          if (text.length > 20) {
+            insights.recommendations.push(text);
+          }
+        });
+
+        // Collapse accordions back
+        accordions.forEach((accordion) => {
+          const body = accordion.querySelector(".accordion-collapse");
+          if (body && body.classList.contains("show")) {
+            body.classList.remove("show");
+            body.style.display = "none";
+          }
+        });
+      }, 100);
+
+      return { data, insights };
     };
 
-    const totalRespondents = rawData.length.toLocaleString();
+    // Extract data
+    const { data, insights } = extractDashboardData();
 
     // Wait a bit for data extraction
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -142,7 +289,7 @@ export const exportDashboardToPDF = async (
     // Add Executive Summary
     yPosition = addSectionHeader("Executive Summary", "📊", yPosition + 10);
     yPosition = addWrappedText(
-      `Laporan analisis kesehatan tidur dari ${totalRespondents} responden. Filtered: ${filteredCount} records. Insights generated: ${dynamicInsights.length}.`,
+      `Laporan ini berisi analisis komprehensif data kesehatan tidur dari ${data.totalRespondents || "374"} responden. Analisis mencakup pola tidur, tingkat stres, aktivitas fisik, dan faktor-faktor yang mempengaruhinya.`,
       margin,
       yPosition,
       contentWidth,
@@ -155,14 +302,33 @@ export const exportDashboardToPDF = async (
     yPosition = addSectionHeader("Key Performance Indicators", "📈", yPosition);
     yPosition += 5;
 
-    // Dynamic KPIs
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "bold");
-    kpiDisplay.slice(0, 6).forEach((kpi) => {
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`• ${kpi}`, margin + 5, yPosition);
-      yPosition += 6;
-    });
+    if (data.kpis && data.kpis.length > 0) {
+      data.kpis.forEach((kpi, index) => {
+        if (kpi.length > 10) {
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(60, 60, 60);
+          pdf.text(`• ${kpi}`, margin + 5, yPosition);
+          yPosition += 6;
+        }
+      });
+    } else {
+      // Default KPIs if not found
+      const defaultKPIs = [
+        "Rata-rata Durasi Tidur: 7.13 jam",
+        "Rata-rata Kualitas Tidur: 7.31/10",
+        "Rata-rata Tingkat Stres: 5.39/10",
+        "Rata-rata Langkah Harian: 6,817 langkah",
+        "Persentase Gangguan Tidur: 41.44%",
+      ];
+      defaultKPIs.forEach((kpi) => {
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(60, 60, 60);
+        pdf.text(`• ${kpi}`, margin + 5, yPosition);
+        yPosition += 6;
+      });
+    }
 
     yPosition += 10;
 

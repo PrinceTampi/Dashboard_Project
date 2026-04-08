@@ -155,14 +155,33 @@ export const exportDashboardToPDF = async (
     yPosition = addSectionHeader("Key Performance Indicators", "📈", yPosition);
     yPosition += 5;
 
-    // Dynamic KPIs
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "bold");
-    kpiDisplay.slice(0, 6).forEach((kpi) => {
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`• ${kpi}`, margin + 5, yPosition);
-      yPosition += 6;
-    });
+    if (data.kpis && data.kpis.length > 0) {
+      data.kpis.forEach((kpi, index) => {
+        if (kpi.length > 10) {
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(60, 60, 60);
+          pdf.text(`• ${kpi}`, margin + 5, yPosition);
+          yPosition += 6;
+        }
+      });
+    } else {
+      // Default KPIs if not found
+      const defaultKPIs = [
+        "Rata-rata Durasi Tidur: 7.13 jam",
+        "Rata-rata Kualitas Tidur: 7.31/10",
+        "Rata-rata Tingkat Stres: 5.39/10",
+        "Rata-rata Langkah Harian: 6,817 langkah",
+        "Persentase Gangguan Tidur: 41.44%",
+      ];
+      defaultKPIs.forEach((kpi) => {
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(60, 60, 60);
+        pdf.text(`• ${kpi}`, margin + 5, yPosition);
+        yPosition += 6;
+      });
+    }
 
     yPosition += 10;
 

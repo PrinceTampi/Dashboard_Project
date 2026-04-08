@@ -99,6 +99,22 @@ function App() {
     setFilters(newFilters);
   };
 
+  const handleExportPDF = () => {
+    const timestamp = new Date()
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replace(/\//g, "-");
+    exportDashboardToPDF(
+      rawData,
+      schema,
+      filteredData,
+      `Sleep_Health_Report_${timestamp}.pdf`,
+    );
+  };
+
   // Loading state
   if (loading) {
     return (

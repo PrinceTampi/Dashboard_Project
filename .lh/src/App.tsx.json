@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1775606102858,
@@ -12,6 +12,18 @@
                 {
                     "date": 1775606479895,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -239,8 +239,32 @@\n           justifyContent: \"flex-end\",\r\n           gap: \"10px\",\r\n         }}\r\n       >\r\n+        <a\r\n+          href=\"https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset\"\r\n+          target=\"_blank\"\r\n+          rel=\"noopener noreferrer\"\r\n+          style={{\r\n+            padding: \"8px 16px\",\r\n+            background: \"#6c757d\",\r\n+            color: \"white\",\r\n+            border: \"none\",\r\n+            borderRadius: \"4px\",\r\n+            cursor: \"pointer\",\r\n+            fontSize: \"14px\",\r\n+            fontWeight: \"500\",\r\n+            transition: \"background-color 0.3s ease\",\r\n+            display: \"flex\",\r\n+            alignItems: \"center\",\r\n+            gap: \"6px\",\r\n+            textDecoration: \"none\",\r\n+          }}\r\n+          onMouseOver={(e) => (e.currentTarget.style.background = \"#5a6268\")}\r\n+          onMouseOut={(e) => (e.currentTarget.style.background = \"#6c757d\")}\r\n+        >\r\n+          🔗 Sumber Data\r\n+        </a>\r\n         <button\r\n           onClick={handleExportPDF}\r\n           style={{\r\n             padding: \"8px 16px\",\r\n"
+                },
+                {
+                    "date": 1775610908015,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -108,9 +108,9 @@\n         month: \"2-digit\",\r\n         day: \"2-digit\",\r\n       })\r\n       .replace(/\\//g, \"-\");\r\n-    exportDashboardToPDF(`Sleep_Health_Report_${timestamp}.pdf`);\r\n+    exportDashboardToPDF(rawData, schema, filteredData, `Sleep_Health_Report_${timestamp}.pdf`);\r\n   };\r\n \r\n   // Loading state\r\n   if (loading) {\r\n"
+                },
+                {
+                    "date": 1775611192543,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,11 +7,10 @@\n // @ts-expect-error\r\n import { detectSchema } from \"./utils/detectSchema\";\r\n // @ts-expect-error\r\n import { generateInsights } from \"./utils/generateInsights\";\r\n-// @ts-expect-error\r\n-import { exportDashboardToPDF } from \"./utils/exportPDF\";\r\n \r\n+\r\n // Import components\r\n // @ts-expect-error\r\n import KPISection from \"./components/KPISection\";\r\n // @ts-expect-error\r\n"
+                },
+                {
+                    "date": 1775611197689,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -98,24 +98,10 @@\n   const handleFilterChange = (newFilters: any) => {\r\n     setFilters(newFilters);\r\n   };\r\n \r\n-  const handleExportPDF = () => {\r\n-    const timestamp = new Date()\r\n-      .toLocaleDateString(\"id-ID\", {\r\n-        year: \"numeric\",\r\n-        month: \"2-digit\",\r\n-        day: \"2-digit\",\r\n-      })\r\n-      .replace(/\\//g, \"-\");\r\n-    exportDashboardToPDF(\r\n-      rawData,\r\n-      schema,\r\n-      filteredData,\r\n-      `Sleep_Health_Report_${timestamp}.pdf`,\r\n-    );\r\n-  };\r\n \r\n+\r\n   // Loading state\r\n   if (loading) {\r\n     return (\r\n       <div className=\"dashboard\">\r\n"
                 }
             ],
             "date": 1775606102858,
