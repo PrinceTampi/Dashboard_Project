@@ -8,6 +8,8 @@ import { parseCSV, cleanData } from "./utils/parseCSV";
 import { detectSchema } from "./utils/detectSchema";
 // @ts-expect-error
 import { generateInsights } from "./utils/generateInsights";
+// @ts-expect-error
+import { exportDashboardToPDF } from "./utils/exportPDF";
 
 // Import components
 // @ts-expect-error
@@ -97,6 +99,17 @@ function App() {
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
+  };
+
+  const handleExportPDF = () => {
+    const timestamp = new Date()
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replace(/\//g, "-");
+    exportDashboardToPDF(`Sleep_Health_Report_${timestamp}.pdf`);
   };
 
   // Loading state
@@ -251,6 +264,27 @@ function App() {
         >
           🔗 Sumber Data
         </a>
+        <button
+          onClick={handleExportPDF}
+          style={{
+            padding: "8px 16px",
+            background: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+            fontWeight: "500",
+            transition: "background-color 0.3s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.background = "#0056b3")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "#007bff")}
+        >
+          📄 Export Report (PDF)
+        </button>
       </div>
 
       {/* Header */}

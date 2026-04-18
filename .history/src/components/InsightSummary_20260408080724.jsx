@@ -276,13 +276,7 @@ const InsightSummary = ({ allData }) => {
                     Rata-rata
                   </h5>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {insights.averages.map((avg, idx) => (
                     <div
                       key={idx}
@@ -332,13 +326,7 @@ const InsightSummary = ({ allData }) => {
                     Statistik Penting
                   </h5>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {insights.statistics.map((stat, idx) => (
                     <div
                       key={idx}
@@ -388,13 +376,7 @@ const InsightSummary = ({ allData }) => {
                     Apa insight utama dari data?
                   </h5>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                  }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {insights.mainInsights.map((insight, idx) => (
                     <div
                       key={idx}
@@ -457,13 +439,7 @@ const InsightSummary = ({ allData }) => {
                     Tren apa yang ditemukan?
                   </h5>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                  }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {insights.trends.map((trend, idx) => (
                     <div
                       key={idx}
@@ -526,13 +502,7 @@ const InsightSummary = ({ allData }) => {
                     Apa rekomendasi berdasarkan data?
                   </h5>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                  }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {insights.recommendations.map((rec, idx) => (
                     <div
                       key={idx}

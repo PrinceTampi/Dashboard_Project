@@ -8,6 +8,8 @@ import { parseCSV, cleanData } from "./utils/parseCSV";
 import { detectSchema } from "./utils/detectSchema";
 // @ts-expect-error
 import { generateInsights } from "./utils/generateInsights";
+// @ts-expect-error
+import { exportDashboardToPDF } from "./utils/exportPDF";
 
 // Import components
 // @ts-expect-error
@@ -97,6 +99,17 @@ function App() {
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
+  };
+
+  const handleExportPDF = () => {
+    const timestamp = new Date()
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replace(/\//g, "-");
+    exportDashboardToPDF(`Sleep_Health_Report_${timestamp}.pdf`);
   };
 
   // Loading state
@@ -227,13 +240,11 @@ function App() {
           gap: "10px",
         }}
       >
-        <a
-          href="https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={handleExportPDF}
           style={{
             padding: "8px 16px",
-            background: "#6c757d",
+            background: "#007bff",
             color: "white",
             border: "none",
             borderRadius: "4px",
@@ -244,13 +255,12 @@ function App() {
             display: "flex",
             alignItems: "center",
             gap: "6px",
-            textDecoration: "none",
           }}
-          onMouseOver={(e) => (e.currentTarget.style.background = "#5a6268")}
-          onMouseOut={(e) => (e.currentTarget.style.background = "#6c757d")}
+          onMouseOver={(e) => (e.currentTarget.style.background = "#0056b3")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "#007bff")}
         >
-          🔗 Sumber Data
-        </a>
+          📄 Export Report (PDF)
+        </button>
       </div>
 
       {/* Header */}
